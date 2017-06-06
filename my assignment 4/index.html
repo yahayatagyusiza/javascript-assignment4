@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>YAHAYA | My Places</title>
+	<script type="text/JavaScript" src="jquery-2.1.1.js"></script>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC-kzo7m5yqm7BGc3QaFu-RlnMvtAothKA&libraries=places"></script>
+	<style type="text/css">
+	  .yah{
+	  	width:650px;
+	  	height:600px;
+	  	background-color: #F0FFF0;
+	  	-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;
+        -webkit-box-shadow:0 1px 1px rgba(0, 0, 0, 0.5);-moz-box-shadow:0 1px 1px rgba(0, 0, 0, 0.5);box-shadow:0 1px 1px rgba(0, 0, 0, 0.5);
+	  }
+	  .h1{
+		font-size:16px;
+		  color:#800000;
+		  text-shadow: none;
+	  }
+	  .hay{
+	  	 background-color: 	#808080;
+	  }
+	  .plac{
+		  padding:5px;
+		  font-size:16px;
+		  color:#800000;
+		  text-shadow: none;
+		  width: 90%;
+		  outline: none;
+		  outline-color: transparent;
+		  outline-style: none;
+		  margin-bottom: 5px;
+		  border:1px solid rgb(234, 229, 229);
+     }
+     .goo{
+        width:650px;
+        padding-top:5px;
+	  	background-color: 	#F0E68C;
+       	-webkit-border-radius:3px;-moz-border-radius:3px;border-radius:3px;
+        -webkit-box-shadow:0 1px 1px rgba(0, 0, 0, 0.5);-moz-box-shadow:0 1px 1px rgba(0, 0, 0, 0.5);box-shadow:0 1px 1px rgba(0, 0, 0, 0.5);
+     }
+	</style>
+	<script type="text/javascript">
+	 $(document).ready(function(){
+	    var map;
+		var service;
+		var infowindow;
+		var latx;
+		var lngx;
+
+		function getLocation() {
+		    if (navigator.geolocation) {
+		        navigator.geolocation.getCurrentPosition(showPosition);
+		    } else {
+		        alert("Geolocation is not supported by this browser.");
+		    }
+		}
+
+		function showPosition(position) {
+			latx = position.coords.latitude;
+			lngx = position.coords.longitude;
+		    console.log("Latitude: " + latx);
+		    console.log("Longitude: " + lngx);
+		    initialize(latx,lngx);
+		}
+
+		function initialize(lat,lng) {
+		  var pyrmont = new google.maps.LatLng(lat,lng);
+		  var myLatLng = {lat:latx, lng:lngx};
+
+		  map = new google.maps.Map(document.getElementById('map'), {
+		      center: pyrmont,
+		      zoom: 15
+		    });
+
+            var marker = new google.maps.Marker({
+		      map: map,
+		      position: myLatLng
+		    });
+
+		    var infowindow = new google.maps.InfoWindow({
+			    content: 'My location'
+			});
+
+			infowindow.open(map, marker);
+
+		    /*marker.addListener('click', function() {
+		      infowindow.open(map, marker);
+		    });*/
+
+			marker.setAnimation(google.maps.Animation.BOUNCE);
+		}
+
+		function callback(results, status) {
+		  if (status == google.maps.places.PlacesServiceStatus.OK) {
+		    for (var i = 0; i < results.length; i++) {
+		      var place = results[i];
+		      //console.log(results[i]);
+		        var myLatLng = {lat:latx, lng:lngx};
+			    var markerx = new google.maps.Marker({
+			        map: map,
+			        place: {
+			            placeId: results[i].id,
+			            location: results[i].geometry.location
+			        }
+			    });
+		    }
+		  }
+		}
+
+		function showplaces(plc){
+          var pyrmont = new google.maps.LatLng(latx,lngx);
+          var myLatLng = {lat:latx, lng:lngx};
+
+		  map = new google.maps.Map(document.getElementById('map'), {
+		      center: pyrmont,
+		      zoom: 13
+		  });
+
+		  var markery = new google.maps.Marker({
+		      map: map,
+		      position: myLatLng
+		  });
+
+		  var infowindowx = new google.maps.InfoWindow({
+			  content: 'My location'
+	      });
+
+	      infowindowx.open(map, markery);
+
+		  var request = {
+		    location: pyrmont,
+		    radius: '500',
+		    query: plc
+		  };
+
+		  service = new google.maps.places.PlacesService(map);
+		  service.textSearch(request, callback);
+		} 
+        
+        getLocation();
+
+        $('#hyy').on('change', function() {
+           var ptyp = $('#hyy option:selected').text();
+           console.log(ptyp);
+           if(ptyp=="Choose place"){
+             alert("Choose valid place");
+           }else{
+             showplaces(ptyp);
+           }
+           
+        });
+
+	 });
+	</script>
+</head>
+<body class="hay">
+   <div align="center">
+     <div class="goo">
+	 <h1>Welcome To My Place</h1>
+     	<select class="plac" id='hyy'>
+     	 <option value="">Choose place</option>
+         <option value="">School</option>
+		 <option value="">Church</option>
+         <option value="">Supermarket</option>
+         <option value="">Police Station</option>
+     	</select>
+     </div></br>
+   	 <div id="map" class="yah">
+   	 	
+   	 </div>
+   </div>
+</body>
+</html>
